@@ -476,6 +476,10 @@ func deleteDockerRegistryImage(pushOpts internalPushImageOptions, sha256Digest, 
 		req.SetBasicAuth(username, password)
 	}
 
+	if pushOpts.NormalizedRegistry == "https://ghcr.io" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", base64.StdEncoding.EncodeToString([]byte(password))))
+	}
+
 	// We accept schema v2 manifests and manifest lists, and also OCI types
 	req.Header.Add("Accept", "application/vnd.docker.distribution.manifest.v2+json")
 	req.Header.Add("Accept", "application/vnd.docker.distribution.manifest.list.v2+json")

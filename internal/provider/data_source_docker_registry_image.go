@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -102,6 +103,10 @@ func getImageDigest(registry, image, tag, username, password string, insecureSki
 
 	if username != "" {
 		req.SetBasicAuth(username, password)
+	}
+
+	if registry == "ghcr.io" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", base64.StdEncoding.EncodeToString([]byte(password))))
 	}
 
 	// We accept schema v2 manifests and manifest lists, and also OCI types
